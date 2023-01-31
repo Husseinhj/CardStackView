@@ -95,11 +95,13 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
     }
 
     public void onPreClick(View view) {
-        mStackView.pre();
+        mTestStackAdapter.updateItem(R.color.color_1, 0);
     }
 
     public void onNextClick(View view) {
-        mStackView.next();
+
+        mTestStackAdapter.updateItem(R.color.colorPrimary, 0);
+
     }
 
     @Override

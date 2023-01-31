@@ -230,17 +230,41 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
     }
 
     private void refreshView() {
+        refreshView(-1);
+    }
+    private void refreshView(int position) {
+        if (position > -1) {
+            updateViewHolder(position);
+
+            requestLayout();
+
+            return;
+        }
         removeAllViews();
         mViewHolders.clear();
         for (int i = 0; i < mStackAdapter.getItemCount(); i++) {
-            ViewHolder holder = getViewHolder(i);
-            holder.position = i;
-            holder.onItemExpand(i == mSelectPosition);
-            addView(holder.itemView);
-            setClickAnimator(holder, i);
-            mStackAdapter.bindViewHolder(holder, i);
+            createViewHolder(i);
         }
         requestLayout();
+    }
+
+    private void createViewHolder(int i) {
+        ViewHolder holder = getViewHolder(i);
+        holder.position = i;
+        holder.onItemExpand(i == mSelectPosition);
+        addView(holder.itemView);
+        setClickAnimator(holder, i);
+        mStackAdapter.bindViewHolder(holder, i);
+    }
+
+    private void updateViewHolder(int position) {
+        ViewHolder holder = getViewHolder(position);
+        removeView(holder.itemView);
+        holder.position = position;
+        holder.onItemExpand(position == mSelectPosition);
+        addView(holder.itemView, position);
+        setClickAnimator(holder, position);
+        mStackAdapter.bindViewHolder(holder, position);
     }
 
     ViewHolder getViewHolder(int i) {
@@ -703,6 +727,10 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
             mObservable.notifyChanged();
         }
 
+        public final void notifyDataChanged(int position) {
+            mObservable.notifyChanged(position);
+        }
+
         public void registerObserver(AdapterDataObserver observer) {
             mObservable.registerObserver(observer);
         }
@@ -739,17 +767,28 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
                 mObservers.get(i).onChanged();
             }
         }
+
+        public void notifyChanged(int position) {
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onChanged(position);
+            }
+        }
     }
 
     public static abstract class AdapterDataObserver {
-        public void onChanged() {
-        }
+        public void onChanged() {}
+
+        public void onChanged(int position) {}
     }
 
     private class ViewDataObserver extends AdapterDataObserver {
         @Override
         public void onChanged() {
             refreshView();
+        }
+
+        public void onChanged(int position) {
+            refreshView(position);
         }
     }
 

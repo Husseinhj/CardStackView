@@ -23,6 +23,11 @@ public abstract class StackAdapter<T> extends CardStackView.Adapter<CardStackVie
         this.notifyDataSetChanged();
     }
 
+    public void updateItem(T item, int position) {
+        mData.set(position, item);
+        this.notifyDataChanged(position);
+    }
+
     public void setData(List<T> data) {
         this.mData.clear();
         if (data != null) {
