@@ -180,6 +180,8 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
         post(() -> {
             if (mViewHolders.size() > selectPosition) {
                 doCardClickAnimation(mViewHolders.get(selectPosition), selectPosition);
+            } else {
+                mSelectPosition = DEFAULT_SELECT_POSITION;
             }
         });
     }
