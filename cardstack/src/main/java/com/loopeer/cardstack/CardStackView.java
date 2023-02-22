@@ -177,9 +177,8 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
     }
 
     public void updateSelectPosition(final int selectPosition) {
-        post(new Runnable() {
-            @Override
-            public void run() {
+        post(() -> {
+            if (mViewHolders.size() > selectPosition) {
                 doCardClickAnimation(mViewHolders.get(selectPosition), selectPosition);
             }
         });
